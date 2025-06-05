@@ -5,6 +5,10 @@ using namespace std;
 
 const int N = 2*1e5;
 int n = 0, q = 0;
+// your segment tree stored inarray
+// first node is node 1 (omit node 0)
+// child of tree[k] are tree[2k] and tree[2k + 1]
+// parent of tree[k] is tree[k//2]
 unsigned long tree[2 * N];
 
 void build() {
@@ -14,10 +18,13 @@ void build() {
         tree[i] = tree[2 * i] + tree[2 * i + 1];
 }
 
-unsigned long query(int l, int r) { // sum on interval [l, r), using 0 index
+// sum on interval [l, r), using 0 index
+unsigned long query(int l, int r) {
     unsigned long res = 0;
-    l += n; r += n;
+    l += n; r += n; // shift by n
     while(l < r) {
+        // if l is a right node, add that and move to the right
+        // if r is a right node, move left, add that
         if (l % 2 == 1) res += tree[l++];
         if (r % 2 == 1) res += tree[--r];
         l >>= 1;
@@ -26,15 +33,10 @@ unsigned long query(int l, int r) { // sum on interval [l, r), using 0 index
     return res;
 }
 
+// update tree[k] = u and update the tree
 void update(int k, int u) {
-    k += n - 1;
-    unsigned long curr = tree[k];
-    tree[k] = u;
-    long diff = u - curr;
-    while (k > 0) {
-        k >>= 1;
-        tree[k] += diff;
-    }
+    //k^1 gives 1 if k is even or 0 if k is odd, ie gives the neighbor of k
+    for (tree[k += n - 1] = u; k > 1; k >>= 1) tree[k >> 1] = tree[k] + tree[k^1];
 }
 
 int main() {

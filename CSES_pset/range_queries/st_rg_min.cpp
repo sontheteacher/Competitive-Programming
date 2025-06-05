@@ -29,6 +29,7 @@ int query(int l, int r) {
     return res;
 }
 
+// this works
 // void update(int k, int u) {
 //     k += n - 1;
 //     tree[k] = u;
